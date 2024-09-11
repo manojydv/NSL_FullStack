@@ -87,6 +87,18 @@ function App() {
 }
 
 const styles = {
+
+  
+    container: {
+      fontFamily: 'Poppins, sans-serif',
+      color: '#333',
+      backgroundColor: '#FF5733', 
+      textAlign: 'center',
+      padding: '20px',
+      minHeight: '100vh', 
+    
+  
+
   container: {
     fontFamily: 'Poppins, sans-serif',
     color: '#333',
@@ -192,6 +204,6 @@ const styles = {
     fontSize: '0.9em',
     color: '#666',
   },
+}
 };
-
 export default App;
