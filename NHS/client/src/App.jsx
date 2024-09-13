@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 function App() {
+  // State variables
   const [translatedText, setTranslatedText] = useState('Waiting for translation...');
   const [inputText, setInputText] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [recognition, setRecognition] = useState(null);
+  
   const videoRef = useRef(null);
 
+  // Start camera function
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
     } catch (err) {
-      console.error("Error accessing the camera: ", err);
+      console.error('Error accessing the camera: ', err);
     }
   };
 
+  // Simulate sign language translation
   useEffect(() => {
     const interval = setInterval(() => {
       const simulatedTranslation = 'Hello!';
@@ -22,6 +29,7 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Text-to-speech function
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -41,13 +49,57 @@ function App() {
     }
   };
 
+  // Initialize speech-to-text (speech recognition)
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const speechRecognition = new SpeechRecognition();
+      speechRecognition.continuous = true;
+      speechRecognition.interimResults = true;
+      speechRecognition.lang = 'en-US';
+
+      speechRecognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcriptSegment = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            setTranscript((prevTranscript) => prevTranscript + transcriptSegment);
+          } else {
+            interimTranscript += transcriptSegment;
+          }
+        }
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.error('Speech recognition error detected: ' + event.error);
+      };
+
+      setRecognition(speechRecognition);
+    } else {
+      console.error('Your browser does not support Speech Recognition.');
+      alert('Speech Recognition API is not supported in this browser. Please use Google Chrome.');
+    }
+  }, []);
+
+  const startListening = () => {
+    if (recognition) {
+      setIsListening(true);
+      recognition.start();
+      setTranscript('Listening...');
+    }
+  };
+
+  const stopListening = () => {
+    if (recognition) {
+      setIsListening(false);
+      recognition.stop();
+      setTranscript((prev) => prev + ' Stopped Listening.');
+    }
+  };
+
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>Sign Language Translator</h1>
-        <p style={styles.subtitle}>With Real-Time Text-to-Speech</p>
-      </header>
-
+      {/* Camera Section */}
       <div style={styles.content}>
         <div style={styles.videoContainer}>
           <video ref={videoRef} style={styles.video} autoPlay playsInline></video>
@@ -56,6 +108,7 @@ function App() {
           </button>
         </div>
 
+        {/* Translated Text Section */}
         <div style={styles.output}>
           <h2 style={styles.subheading}>Translated Text</h2>
           <p style={styles.translatedText}>{translatedText}</p>
@@ -64,6 +117,7 @@ function App() {
           </button>
         </div>
 
+        {/* Text-to-Speech Input Section */}
         <div style={styles.textToSpeech}>
           <h2 style={styles.subheading}>Convert Your Text to Speech</h2>
           <input
@@ -77,8 +131,21 @@ function App() {
             Convert to Speech
           </button>
         </div>
+
+        {/* Speech-to-Text Section */}
+        <div className="container">
+          <h4>Speech to Text Converter</h4>
+          <button className="btn" onClick={startListening} disabled={isListening}>
+            Start Listening
+          </button>
+          <button className="btn" onClick={stopListening} disabled={!isListening}>
+            Stop Listening
+          </button>
+          <p className="output">{transcript}</p>
+        </div>
       </div>
 
+      {/* Footer */}
       <footer style={styles.footer}>
         <p>&copy; 2024 Sign Language Translator</p>
       </footer>
@@ -86,38 +153,14 @@ function App() {
   );
 }
 
+// Styles
 const styles = {
-
-  
-    container: {
-      fontFamily: 'Poppins, sans-serif',
-      color: '#333',
-      backgroundColor: '#FF5733', 
-      textAlign: 'center',
-      padding: '20px',
-      minHeight: '100vh', 
-    
-  
-
   container: {
     fontFamily: 'Poppins, sans-serif',
     color: '#333',
     backgroundColor: '#f9f9f9',
     textAlign: 'center',
     padding: '20px',
-  },
-  header: {
-    marginBottom: '30px',
-    color: '#0056b3',
-  },
-  title: {
-    fontSize: '3em',
-    fontWeight: 'bold',
-    color: '#007bff',
-  },
-  subtitle: {
-    fontSize: '1.2em',
-    color: '#555',
   },
   content: {
     display: 'flex',
@@ -146,10 +189,6 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s',
-  },
-  buttonHover: {
-    backgroundColor: '#218838',
   },
   output: {
     marginTop: '30px',
@@ -175,7 +214,6 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s',
   },
   textToSpeech: {
     marginBottom: '50px',
@@ -187,7 +225,6 @@ const styles = {
     marginBottom: '20px',
     border: '2px solid #007bff',
     borderRadius: '8px',
-    outline: 'none',
   },
   convertButton: {
     padding: '12px 25px',
@@ -196,14 +233,12 @@ const styles = {
     color: '#333',
     border: 'none',
     borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
   },
   footer: {
     marginTop: '40px',
     fontSize: '0.9em',
     color: '#666',
   },
-}
 };
+
 export default App;
