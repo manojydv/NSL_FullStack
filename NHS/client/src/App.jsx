@@ -97,6 +97,10 @@ function App() {
     }
   };
 
+
+  
+
+
   return (
     <div style={styles.container}>
       {/* Camera Section */}
@@ -154,11 +158,13 @@ function App() {
 }
 
 // Styles
+//new style for animation
+
 const styles = {
   container: {
     fontFamily: 'Poppins, sans-serif',
     color: '#333',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f0f0f0',
     textAlign: 'center',
     padding: '20px',
   },
@@ -167,12 +173,14 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    animation: 'fadeIn 1s ease-in', // Fade in animation for content
   },
   videoContainer: {
     width: '640px',
     height: '480px',
     marginBottom: '30px',
     position: 'relative',
+    animation: 'pulse 2s infinite', // Pulsing animation for the video container
   },
   video: {
     width: '100%',
@@ -189,11 +197,17 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
+    animation: 'bounceIn 1s', // Button bounce animation when rendered
+    transition: 'transform 0.3s',
+  },
+  buttonHover: {
+    transform: 'scale(1.1)', // Enlarge button slightly on hover
   },
   output: {
     marginTop: '30px',
     marginBottom: '40px',
     textAlign: 'center',
+    animation: 'fadeInUp 1s ease-in-out', // Fade-in and slide-up for text
   },
   subheading: {
     fontSize: '1.8em',
@@ -205,6 +219,8 @@ const styles = {
     color: '#28a745',
     fontWeight: 'bold',
     marginBottom: '20px',
+    opacity: 0,
+    animation: 'fadeInText 2s forwards', // Fade-in animation for translated text
   },
   speakButton: {
     padding: '10px 20px',
@@ -214,9 +230,14 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
+    transition: 'transform 0.3s',
+  },
+  speakButtonHover: {
+    transform: 'scale(1.1)', // Enlarge button slightly on hover
   },
   textToSpeech: {
     marginBottom: '50px',
+    animation: 'fadeIn 1s ease-in', // Fade-in for text-to-speech section
   },
   input: {
     width: '80%',
@@ -225,6 +246,11 @@ const styles = {
     marginBottom: '20px',
     border: '2px solid #007bff',
     borderRadius: '8px',
+    transition: 'box-shadow 0.3s',
+    boxShadow: '0px 0px 0px 0px rgba(0, 123, 255, 0)', // Input focus animation
+  },
+  inputFocus: {
+    boxShadow: '0px 0px 8px 2px rgba(0, 123, 255, 0.5)', // Glowing box-shadow on input focus
   },
   convertButton: {
     padding: '12px 25px',
@@ -233,12 +259,54 @@ const styles = {
     color: '#333',
     border: 'none',
     borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'transform 0.3s',
+  },
+  convertButtonHover: {
+    transform: 'scale(1.1)', // Enlarge button slightly on hover
   },
   footer: {
     marginTop: '40px',
     fontSize: '0.9em',
     color: '#666',
+    animation: 'fadeIn 1s ease-in',
+  },
+
+  // Animations
+  '@keyframes fadeIn': {
+    '0%': { opacity: 0 },
+    '100%': { opacity: 1 },
+  },
+  '@keyframes fadeInUp': {
+    '0%': { opacity: 0, transform: 'translateY(20px)' },
+    '100%': { opacity: 1, transform: 'translateY(0)' },
+  },
+  '@keyframes fadeInText': {
+    '0%': { opacity: 0 },
+    '100%': { opacity: 1 },
+  },
+  '@keyframes bounceIn': {
+    '0%': { transform: 'scale(0.5)' },
+    '50%': { transform: 'scale(1.1)' },
+    '100%': { transform: 'scale(1)' },
+  },
+  '@keyframes pulse': {
+    '0%': { transform: 'scale(1)' },
+    '50%': { transform: 'scale(1.05)' },
+    '100%': { transform: 'scale(1)' },
   },
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default App;
